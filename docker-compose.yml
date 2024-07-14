@@ -1,0 +1,51 @@
+version: '3'
+services:
+    frontend:
+        build:
+            context: frontend
+        container_name: frontend
+        restart: always
+        ports:
+            - '3000:3000'
+        environment:
+            NODE_ENV: development
+        depends_on:
+            - backend
+        networks:
+            - bridge
+
+    backend:
+        build:
+            context: backend
+        container_name: backend
+        restart: always
+        ports:
+            - "3001:3001"
+        environment:
+            NODE_ENV: development
+        depends_on:
+            - mysql
+        networks:
+            - bridge
+
+    mysql:
+        image: mysql:8
+        container_name: mysql
+        restart: always
+        ports:
+            - '3306:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+            MYSQL_DATABASE: '${MYSQL_DATABASE}'
+        volumes:
+            - 'mysql-data:/var/lib/mysql'
+        networks:
+            - bridge
+
+networks:
+    bridge:
+        driver: bridge
+
+volumes:
+    mysql-data:
+        driver: local
